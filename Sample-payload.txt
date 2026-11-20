@@ -1,0 +1,142 @@
+1. http://localhost:8000/api/v1/recommendations/home [POST]
+
+{
+  "user_id": "USER_101",
+  "family_details": {
+    "adults": 2,
+    "children": 2,
+    "children_age_groups": ["4-8", "9-13"],
+    "food_preference": "non_vegetarian",
+    "allergies": [],
+    "goals": ["balanced_family_nutrition", "increase_protein"]
+  },
+  "recent_orders": [
+    {
+      "product_id": "PROD_101",
+      "product_name": "Fresh Chicken",
+      "quantity": 1
+    }
+  ],
+  "available_products": ["PROD_201", "PROD_202", "PROD_203"],
+  "recommendation_limit": 3
+}
+
+------------------------------------------------------------------------
+
+2. http://localhost:8000/api/v1/products/nutrition [POST]
+
+{
+  "product_details": {
+    "product_id": "PROD_101",
+    "product_name": "Fresh Chicken",
+    "category": "Meat",
+    "pack_size": "500g",
+    "description": "Fresh farm chicken",
+    "nutrition": {
+      "protein_g_per_100g": 21,
+      "carbohydrates_g_per_100g": 0,
+      "fat_g_per_100g": 5,
+      "calories_per_100g": 120,
+      "status": "verified"
+    }
+  }
+}
+
+------------------------------------------------------------------------
+
+3. http://localhost:8000/api/v1/recommendations/cart [POST]
+
+{
+  "cart_items": [
+    {
+      "product_id": "PROD_101",
+      "product_name": "Fresh Chicken",
+      "category": "Meat",
+      "quantity": 1
+    },
+    {
+      "product_id": "PROD_102",
+      "product_name": "Basmati Rice",
+      "category": "Rice",
+      "quantity": 1
+    }
+  ],
+  "available_products": [
+    "PROD_101",
+    "PROD_201",
+    "PROD_202",
+    "PROD_203"
+  ],
+  "recommendation_limit": 5
+}
+
+------------------------------------------------------------------------
+
+4. http://localhost:8000/api/v1/recommendations/fruits-vegetables [POST]
+
+{
+  "available_products": [
+    {
+      "product_id": "PROD_301",
+      "product_name": "Apple",
+      "category": "Fruit"
+    },
+    {
+      "product_id": "PROD_302",
+      "product_name": "Carrot",
+      "category": "Vegetable"
+    },
+    {
+      "product_id": "PROD_303",
+      "product_name": "Fresh Chicken",
+      "category": "Meat"
+    }
+  ],
+  "recommendation_limit": 5
+}
+
+------------------------------------------------------------------------
+
+5. http://localhost:8000/api/v1/orders/nutrition-snapshot [POST]
+
+{
+  "items": [
+    {
+      "product_id": "PROD_101",
+      "product_name": "Fresh Chicken",
+      "quantity": 1,
+      "pack_size": "500g",
+      "protein_min_g_per_100g": 20,
+      "protein_max_g_per_100g": 23,
+      "nutrition_status": "estimated"
+    },
+    {
+      "product_id": "PROD_102",
+      "product_name": "Organic Rice",
+      "quantity": 1,
+      "pack_size": "1kg",
+      "protein_min_g_per_100g": null,
+      "protein_max_g_per_100g": null,
+      "nutrition_status": "unavailable"
+    }
+  ]
+}
+
+------------------------------------------------------------------------
+
+6. http://localhost:8000/api/v1/recommendations/recipes [POST]
+
+{
+  "cart_items": [
+    "Fresh Chicken",
+    "Rice"
+  ],
+  "available_products": [
+    "Carrot",
+    "Capsicum",
+    "Beans"
+  ],
+  "recommendation_limit": 3
+}
+
+------------------------------------------------------------------------
