@@ -5,9 +5,10 @@ from app.api.cart import router as cart_router
 from app.api.fruits_vegetables import router as fruits_vegetables_router
 from app.api.orders import router as order_router
 from app.api.recipes import router as recipe_router
+from app.core.config import settings
 
 app = FastAPI(
-    title="Namma Ooru AI API",
+    title=settings.app_name,
     description="AI service for Namma Ooru application",
     version="1.0.0"
 )
@@ -53,3 +54,6 @@ app.include_router(
     prefix="/api/v1",
     tags=["Recipe Ideas"]
 )
+
+print(settings.app_env)
+print(settings.aws_region)
