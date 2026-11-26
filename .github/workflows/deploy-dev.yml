@@ -1,0 +1,67 @@
+
+name: Deploy Namma Ooru AI - Dev
+
+on:
+  push:
+    branches:
+      - dev
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate FastAPI application
+        run: |
+          python -c "from app.main import app; print('FastAPI app loaded successfully')"
+
+      - name: Deploy to AWS Lightsail
+        env:
+          LIGHTSAIL_HOST: ${{ secrets.LIGHTSAIL_HOST }}
+          LIGHTSAIL_USER: ${{ secrets.LIGHTSAIL_USER }}
+          LIGHTSAIL_SSH_KEY: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          LIGHTSAIL_KNOWN_HOSTS: ${{ secrets.LIGHTSAIL_KNOWN_HOSTS }}
+        run: |
+          if [ -z "$LIGHTSAIL_HOST" ] || \
+             [ -z "$LIGHTSAIL_USER" ] || \
+             [ -z "$LIGHTSAIL_SSH_KEY" ] || \
+             [ -z "$LIGHTSAIL_KNOWN_HOSTS" ]; then
+            echo "AWS Lightsail credentials are not configured."
+            echo "Skipping deployment for now."
+            exit 0
+          fi
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          echo "$LIGHTSAIL_SSH_KEY" > ~/.ssh/lightsail_key
+          chmod 600 ~/.ssh/lightsail_key
+
+          echo "$LIGHTSAIL_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+          ssh -i ~/.ssh/lightsail_key \
+            "$LIGHTSAIL_USER@$LIGHTSAIL_HOST" \
+            "cd /opt/nammaooru-ai-service && \
+             git fetch origin dev && \
+             git checkout dev && \
+             git pull origin dev && \
+             source venv/bin/activate && \
+             pip install -r requirements.txt && \
+             sudo systemctl restart nammaooru-ai && \
+             sudo systemctl status nammaooru-ai --no-pager"
